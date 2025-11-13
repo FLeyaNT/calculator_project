@@ -56,6 +56,27 @@ class Calculator(MainWindow):
         elif func == "x^2": result = math.pow(float(self.number.get()), 2)
         elif func == "1/x": result = 1 / float(self.number.get())
         self.number.set(str(result)) 
+        
+    def setPoint(self) -> None:
+        if "." not in self.number.get():
+            self.number.set(self.number.get() + ".")
+            self.first_dig = False
+            
+    def getPercent(self) -> None:
+        if len(self.expression.get()) > 0:
+            action = self.expression.get()[-1]
+            string = self.expression.get()[0:len(self.expression.get())-1]
+            self.expression.set(f"{str(eval(string))} {action}")
+            if action == '*' or action == '/':
+                self.number.set(str(float(self.number.get()) / 100))
+            elif action == '+' or action == '-':
+                num1 = float(self.expression.get()[0:len(self.expression.get())-2])
+                num2 = float(self.number.get())
+                self.number.set(str(num1 * ((num2) / 100)))
+            self.getResult()
+        else:
+            num1 = float(self.number.get())
+            self.number.set(str(num1 / 100))
 
 if __name__ == '__main__':
     calc = Calculator()
