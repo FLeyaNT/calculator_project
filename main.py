@@ -28,6 +28,28 @@ class Calculator(MainWindow):
         else:
             self.number.set(self.number.get() + num)
         self.first_dig = False
+    
+    def setActionSign(self, sign: chr) -> None:
+        if "=" in self.expression.get():
+            self.expression.set("")
+        self.expression.set(f"{self.expression.get()} {self.number.get()} {sign}")
+        self.first_dig = True
+
+    def getResult(self) -> None:
+        if ("=" not in self.expression.get()):
+            self.expression.set(f"{self.expression.get()} {self.number.get()}")
+            try:
+                self.number.set(str(eval(self.expression.get())))
+            except:
+                self.number.set("Ошибка")
+            self.expression.set(f"{self.expression.get()} =")
+        self.first_dig = True
+   
+    def clearNum(self) -> None: self.number.set("0")
+
+    def clearAll(self) -> None:
+        self.expression.set("")
+        self.number.set("0")
 
 if __name__ == '__main__':
     calc = Calculator()
