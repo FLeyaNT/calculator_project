@@ -23,6 +23,7 @@ class Calculator(MainWindow):
         self.button_8.config(command=lambda: self.setNum("8"))
         self.button_9.config(command=lambda: self.setNum("9"))
         self.button_del.config(command=self.delDigit)
+        self.button_sign.config(command=self.setNegative)
 
     def setNum(self, num: chr) -> None:
         if (self.number.get() == "0") or (self.first_dig == True):
@@ -35,6 +36,10 @@ class Calculator(MainWindow):
         if (len(self.number.get()) < 2 or ("-" in self.number.get() and len(self.number.get()) == 2)):
             self.number.set("0")
         else: self.number.set(self.number.get()[0:len(self.number.get())-1])
+
+    def setNegative(self) -> None:
+        if ("-" not in self.number.get()): self.number.set(f"-{self.number.get()}")
+        else: self.number.set(self.number.get()[1:len(self.number.get())])
 
 if __name__ == '__main__':
     calc = Calculator()
