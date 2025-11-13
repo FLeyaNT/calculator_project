@@ -50,6 +50,12 @@ class Calculator(MainWindow):
     def clearAll(self) -> None:
         self.expression.set("")
         self.number.set("0")
+    
+    def getFunction(self, func: str) -> None:
+        if func == "√": result = math.sqrt(float(self.number.get()))
+        elif func == "x^2": result = math.pow(float(self.number.get()), 2)
+        elif func == "1/x": result = 1 / float(self.number.get())
+        self.number.set(str(result)) 
 
 if __name__ == '__main__':
     calc = Calculator()
