@@ -41,6 +41,11 @@ class Calculator(MainWindow):
         if ("-" not in self.number.get()): self.number.set(f"-{self.number.get()}")
         else: self.number.set(self.number.get()[1:len(self.number.get())])
 
+    def setPoint(self) -> None:
+        if "." not in self.number.get():
+            self.number.set(self.number.get() + ".")
+            self.first_dig = False
+
 if __name__ == '__main__':
     calc = Calculator()
     calc.mainloop()
