@@ -1,5 +1,6 @@
 from tkinter import Tk
 import tkinter as tk
+from PIL import Image, ImageTk
 
 
 class MainWindow(Tk):
@@ -39,6 +40,9 @@ class MainWindow(Tk):
         self.resizable(False, False)
         self.title("Калькулятор")
         self.configure(bg = "#272727")
+        image = Image.open("icon/calculator-icon_34473.png")
+        photo = ImageTk.PhotoImage(image)
+        self.iconphoto(True, photo)
         
         counter = 0
         for entry in self.winfo_children():
