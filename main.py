@@ -10,6 +10,7 @@ class Calculator(MainWindow):
         self.first_dig = True
         self.number = tk.StringVar()
         self.number.set("0")
+        self.entry1.config(textvariable=self.expression)
         self.entry2.config(textvariable=self.number)
         self.button_0.config(command=lambda: self.setNum("0"))
         self.button_1.config(command=lambda: self.setNum("1"))
@@ -21,6 +22,10 @@ class Calculator(MainWindow):
         self.button_7.config(command=lambda: self.setNum("7"))
         self.button_8.config(command=lambda: self.setNum("8"))
         self.button_9.config(command=lambda: self.setNum("9"))
+        self.button_del.config(command=self.delDigit)
+        self.button_sign.config(command=self.setNegative)
+        self.button_comma.config(command=self.setPoint)
+        self.button_perc.config(command=self.getPercent)
 
     def setNum(self, num: chr) -> None:
         if (self.number.get() == "0") or (self.first_dig == True):
@@ -56,6 +61,36 @@ class Calculator(MainWindow):
         elif func == "x^2": result = math.pow(float(self.number.get()), 2)
         elif func == "1/x": result = 1 / float(self.number.get())
         self.number.set(str(result)) 
+
+    def delDigit(self) -> None:
+        if (len(self.number.get()) < 2 or ("-" in self.number.get() and len(self.number.get()) == 2)):
+            self.number.set("0")
+        else: self.number.set(self.number.get()[0:len(self.number.get())-1])
+
+    def setNegative(self) -> None:
+        if ("-" not in self.number.get()): self.number.set(f"-{self.number.get()}")
+        else: self.number.set(self.number.get()[1:len(self.number.get())])
+
+    def setPoint(self) -> None:
+        if "." not in self.number.get():
+            self.number.set(self.number.get() + ".")
+            self.first_dig = False
+
+    def getPercent(self) -> None:
+        if len(self.expression.get()) > 0:
+            action = self.expression.get()[-1]
+            string = self.expression.get()[0:len(self.expression.get())-1]
+            self.expression.set(f"{str(eval(string))} {action}")
+            if action == '*' or action == '/':
+                self.number.set(str(float(self.number.get()) / 100))
+            elif action == '+' or action == '-':
+                num1 = float(self.expression.get()[0:len(self.expression.get())-2])
+                num2 = float(self.number.get())
+                self.number.set(str(num1 * ((num2) / 100)))
+            self.getResult()
+        else:
+            num1 = float(self.number.get())
+            self.number.set(str(num1 / 100))
 
 if __name__ == '__main__':
     calc = Calculator()
