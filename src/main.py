@@ -1,4 +1,4 @@
-from mainwindow import MainWindow
+from src.mainwindow import MainWindow
 import tkinter as tk
 import math
 
