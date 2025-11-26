@@ -1,2 +1,4 @@
 __pycache__
 venv
+*.exe
+.pytest_cache
