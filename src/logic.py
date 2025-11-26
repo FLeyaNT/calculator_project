@@ -1,4 +1,4 @@
-import math
+from decimal import Decimal, getcontext
 
 
 class CalculatorLogic:
@@ -7,6 +7,7 @@ class CalculatorLogic:
         self.first_dig = True
         self.expression = ""
         self.number = "0"
+        getcontext().prec = 50
     
     def setNum(self, num: str) -> None:
         if (self.number == "0") or (self.first_dig == True):
@@ -25,14 +26,35 @@ class CalculatorLogic:
         if ("=" not in self.expression):
             self.expression = f"{self.expression} {self.number}"
             try:
-                self.number = str(self.calculate(self.expression))
+                result = self.calculate(self.expression)
+                self.number = result
             except:
                 self.number = "Ошибка"
             self.expression = f"{self.expression} ="
         self.first_dig = True
 
     def calculate(self, expression: str) -> str:
-        return eval(expression)
+        try:
+            tokens = expression.split()
+            decimal_tokens = []
+            
+            for token in tokens:
+                if token in ['+', '-', '*', '/', '=']:
+                    decimal_tokens.append(token)
+                else:
+                    try:
+                        decimal_num = Decimal(token)
+                        decimal_tokens.append(f"Decimal('{token}')")
+                    except:
+                        decimal_tokens.append(token)
+            
+            decimal_expression = ' '.join(decimal_tokens)
+            
+            result = eval(decimal_expression, {'Decimal': Decimal})
+            
+            return self._format_decimal(result)
+        except:
+            return "Ошибка"
    
     def clearNum(self) -> None: 
         self.number = "0"
@@ -42,13 +64,24 @@ class CalculatorLogic:
         self.number = "0"
     
     def getFunction(self, func: str) -> None:
-        if func == "√": 
-            result = math.sqrt(float(self.number))
-        elif func == "x^2": 
-            result = math.pow(float(self.number), 2)
-        elif func == "1/x": 
-            result = 1 / float(self.number)
-        self.number = str(result)
+        try:
+            num = Decimal(self.number)
+            if func == "√": 
+                if num < 0:
+                    self.number = "Ошибка"
+                    return
+                result = num.sqrt()
+            elif func == "x^2": 
+                result = num * num
+            elif func == "1/x": 
+                if num == 0:
+                    self.number = "Ошибка"
+                    return
+                result = Decimal(1) / num
+            
+            self.number = self._format_decimal(result)
+        except:
+            self.number = "Ошибка"
         
     def setPoint(self) -> None:
         if "." not in self.number:
@@ -56,20 +89,37 @@ class CalculatorLogic:
             self.first_dig = False
             
     def getPercent(self) -> None:
-        if len(self.expression) > 0:
-            action = self.expression[-1]
-            string = self.expression[0:len(self.expression)-1]
-            self.expression = f"{str(eval(string))} {action}"
-            if action == '*' or action == '/':
-                self.number = str(float(self.number) / 100)
-            elif action == '+' or action == '-':
-                num1 = float(self.expression[0:len(self.expression)-2])
-                num2 = float(self.number)
-                self.number = str(num1 * (num2 / 100))
-            self.getResult()
-        else:
-            num1 = float(self.number)
-            self.number = str(num1 / 100)
+        try:
+            if len(self.expression) > 0:
+                parts = self.expression.strip().split()
+                if len(parts) >= 2:
+                    action = parts[-1]
+                    first_number_str = parts[-2]
+                    
+                    first_part_result_str = self.calculate(first_number_str)
+                    if first_part_result_str == "Ошибка":
+                        self.number = "Ошибка"
+                        return
+                    
+                    first_number = Decimal(first_part_result_str)
+                    current_number = Decimal(self.number)
+                    
+                    if action == '*' or action == '/':
+                        result = current_number / Decimal(100)
+                        self.number = self._format_decimal(result)
+                        self.getResult()
+                    elif action == '+' or action == '-':
+                        percent_value = first_number * (current_number / Decimal(100))
+                        self.number = self._format_decimal(percent_value)
+                        self.getResult()
+                else:
+                    self.number = "Ошибка"
+            else:
+                num = Decimal(self.number)
+                result = num / Decimal(100)
+                self.number = self._format_decimal(result)
+        except:
+            self.number = "Ошибка"
     
     def delDigit(self) -> None:
         if (len(self.number) < 2 or ("-" in self.number and len(self.number) == 2)):
@@ -94,3 +144,25 @@ class CalculatorLogic:
     
     def set_number(self, number: str) -> None:
         self.number = number
+
+    def _format_decimal(self, value):
+        try:
+            if isinstance(value, (int, float)):
+                decimal_value = Decimal(str(value))
+            else:
+                decimal_value = value
+            
+            decimal_value = decimal_value.normalize()
+            
+            decimal_value = decimal_value.quantize(Decimal('1.0000000000'))
+            
+            formatted = format(decimal_value, 'f')
+            
+            if '.' in formatted:
+                formatted = formatted.rstrip('0')
+                if formatted.endswith('.'):
+                    formatted = formatted[:-1]
+            
+            return formatted
+        except:
+            return "Ошибка"

@@ -5,10 +5,9 @@ from .logic import CalculatorLogic
 
 class Calculator(MainWindow):
     
-    def __init__(self, testing_mode=False):
+    def __init__(self):
         super().__init__()
-        if not testing_mode:
-            self.setUp()
+        self.setUp()
         
         self.logic = CalculatorLogic()
         

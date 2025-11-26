@@ -1,8 +1,8 @@
 import pytest
-from src.main import Calculator
+from src.logic import CalculatorLogic
 
 
 @pytest.fixture
 def calculator():
-    calc = Calculator(testing_mode=True)
+    calc = CalculatorLogic()
     return calc
