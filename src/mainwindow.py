@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 
 
 class MainWindow(Tk):
+    
     def __init__(self):
         super().__init__()
 
