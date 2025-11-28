@@ -34,7 +34,7 @@ jobs:
           $env:Path = "$nsisPath;" + $env:Path
 
       - name: Build installer
-        run: "makensis installer.nsi
+        run: makensis installer.nsi
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
