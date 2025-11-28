@@ -27,14 +27,10 @@ jobs:
         run: pytest
 
       - name: Install NSIS
-        run: |
-          choco install nsis -y
-          $nsisPath = "C:\Program Files (x86)\NSIS"
-          echo "NSIS_PATH=$nsisPath" | Out-File -FilePath $env:GITHUB_ENV -Append
-          $env:Path = "$nsisPath;" + $env:Path
+        run: choco install nsis -y
 
       - name: Build installer
-        run: makensis installer.nsi
+        run: "C:/Program Files (x86)/NSIS/makensis.exe" installer.nsi
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
